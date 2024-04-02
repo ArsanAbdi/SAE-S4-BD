@@ -7,7 +7,7 @@ DROP TABLE IF EXISTS bibliotheque.ASIN, bibliotheque.GROUPE, bibliotheque.CLIENT
 
 CREATE TABLE bibliotheque.ASIN (
     idAsin INT PRIMARY KEY,
-    ASIN VARCHAR(255) 
+    ASIN VARCHAR(10) 
 );
 
 CREATE TABLE bibliotheque.GROUPE (
@@ -69,4 +69,10 @@ CREATE TABLE bibliotheque.CATEGORIE_PRODUIT (
     FOREIGN KEY (idProduit) REFERENCES bibliotheque.PRODUIT(idProduit)
 );
 
-SELECT * FROM bibliotheque.PRODUIT;
+CREATE TABLE bibliotheque.SIMILAIRE (
+    idAsin INT,
+    idAsinSimilaire INT,
+    PRIMARY KEY (idAsin, idAsinSimilaire),
+    FOREIGN KEY (idAsin) REFERENCES ASIN(idAsin),
+    FOREIGN KEY (idAsinSimilaire) REFERENCES ASIN(idAsin)
+);
