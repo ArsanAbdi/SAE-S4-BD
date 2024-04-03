@@ -73,6 +73,6 @@ CREATE TABLE bibliotheque.SIMILAIRE (
     idAsin INT,
     idAsinSimilaire INT,
     PRIMARY KEY (idAsin, idAsinSimilaire),
-    FOREIGN KEY (idAsin) REFERENCES ASIN(idAsin),
-    FOREIGN KEY (idAsinSimilaire) REFERENCES ASIN(idAsin)
+    FOREIGN KEY (idAsin) REFERENCES bibliotheque.ASIN(idAsin),
+    FOREIGN KEY (idAsinSimilaire) REFERENCES bibliotheque.ASIN(idAsin)
 );
