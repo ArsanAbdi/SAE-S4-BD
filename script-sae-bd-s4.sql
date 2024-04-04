@@ -11,7 +11,7 @@ CREATE TABLE bibliotheque.ASIN (
 );
 
 CREATE TABLE bibliotheque.GROUPE (
-    idGroupe INT PRIMARY KEY,
+    idGroupe SERIAL PRIMARY KEY,
     nom VARCHAR(50)
 );
 
@@ -30,35 +30,25 @@ CREATE TABLE bibliotheque.PRODUIT (
     dow_rev INT,
     avg_rate FLOAT,
     idGroupe INT,
+    idAsin INT,
+    FOREIGN KEY (idAsin) REFERENCES bibliotheque.ASIN(idAsin),
     FOREIGN KEY (idGroupe) REFERENCES bibliotheque.GROUPE(idGroupe)
 );
 
+CREATE TABLE bibliotheque.SIMILAIRE (
+    idAsin INT,
+    idAsinSimilaire INT,
+    PRIMARY KEY (idAsin, idAsinSimilaire),
+    FOREIGN KEY (idAsin) REFERENCES bibliotheque.ASIN(idAsin),
+    FOREIGN KEY (idAsinSimilaire) REFERENCES bibliotheque.ASIN(idAsin)
+);
+
 CREATE TABLE bibliotheque.CATEGORIE (
-    idCat INT PRIMARY KEY,
+    idCat SERIAL PRIMARY KEY,
     nom VARCHAR(100),
     num_cat INT,
     id_parent_cat INT,
     FOREIGN KEY (id_parent_cat) REFERENCES bibliotheque.CATEGORIE(idCat)
-);
-
-CREATE TABLE bibliotheque.REVIEW (
-    idRev INT PRIMARY KEY,
-    idProduit INT,
-    idClient INT,
-    date DATE,
-    rating INT,
-    votes INT,
-    helpful INT,
-    FOREIGN KEY (idProduit) REFERENCES bibliotheque.PRODUIT(idProduit),
-    FOREIGN KEY (idClient) REFERENCES bibliotheque.CLIENT(idClient)
-);
-
-CREATE TABLE bibliotheque.PRODUIT_ASIN (
-    idProduit INT,
-    idAsin INT,
-    PRIMARY KEY (idProduit, idAsin),
-    FOREIGN KEY (idProduit) REFERENCES bibliotheque.PRODUIT(idProduit),
-    FOREIGN KEY (idAsin) REFERENCES bibliotheque.ASIN(idAsin)
 );
 
 CREATE TABLE bibliotheque.CATEGORIE_PRODUIT (
@@ -69,10 +59,14 @@ CREATE TABLE bibliotheque.CATEGORIE_PRODUIT (
     FOREIGN KEY (idProduit) REFERENCES bibliotheque.PRODUIT(idProduit)
 );
 
-CREATE TABLE bibliotheque.SIMILAIRE (
-    idAsin INT,
-    idAsinSimilaire INT,
-    PRIMARY KEY (idAsin, idAsinSimilaire),
-    FOREIGN KEY (idAsin) REFERENCES bibliotheque.ASIN(idAsin),
-    FOREIGN KEY (idAsinSimilaire) REFERENCES bibliotheque.ASIN(idAsin)
+CREATE TABLE bibliotheque.REVIEW (
+    idRev SERIAL PRIMARY KEY,
+    idProduit INT,
+    idClient INT,
+    date DATE,
+    rating INT,
+    votes INT,
+    helpful INT,
+    FOREIGN KEY (idProduit) REFERENCES bibliotheque.PRODUIT(idProduit),
+    FOREIGN KEY (idClient) REFERENCES bibliotheque.CLIENT(idClient)
 );
