@@ -17,7 +17,7 @@ CREATE TABLE bibliotheque.GROUPE (
 
 CREATE TABLE bibliotheque.CLIENT (
     idClient INT PRIMARY KEY,
-    nom VARCHAR(255)
+    nom VARCHAR(255) UNIQUE
 );
 
 CREATE TABLE bibliotheque.PRODUIT (

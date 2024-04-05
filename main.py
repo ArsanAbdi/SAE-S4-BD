@@ -12,9 +12,9 @@ def main():
         try:
 
             data = extraire_donnees_fichier('amazon-meta.txt')
-            #  insertion_table_asin(bdd, data)
+            #  insertion_table_asin(bdd, data)        c'est parfait
 
-            #  insertion_table_groupe(bdd, data)
+            #  insertion_table_groupe(bdd, data)      c'est parfait
 
             #  insertion_table_client(bdd, data)
 
@@ -24,16 +24,16 @@ def main():
 
             #  insertion_table_categorie_et_categorie_produit(bdd, data)
 
-            insertion_table_review(bdd, data)
+            #  insertion_table_review(bdd, data)
 
         except Exception as e:
             print(f"problème : {e}")
         finally:
 
             bdd.close()
-            print("Connexion fermée")
+            print("connexion fermée")
     else:
-        print("Connexion à la base de données impossible.")
+        print("connexion à la base de données impossible.")
 
 
 if __name__ == "__main__":
