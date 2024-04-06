@@ -16,13 +16,13 @@ CREATE TABLE bibliotheque.GROUPE (
 );
 
 CREATE TABLE bibliotheque.CLIENT (
-    idClient INT PRIMARY KEY,
+    idClient SERIAL PRIMARY KEY,
     nom VARCHAR(255) UNIQUE
 );
 
 CREATE TABLE bibliotheque.PRODUIT (
     idProduit INT PRIMARY KEY,
-    titre VARCHAR(255),
+    titre VARCHAR(1000),
     salesrank INT,
     nb_similar INT,
     nb_cat INT,

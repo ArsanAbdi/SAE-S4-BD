@@ -1,7 +1,5 @@
-from extraction_insertion import (extraire_donnees_fichier, insertion_table_asin, insertion_table_groupe,
-                                  insertion_table_client, insertion_table_produit, insertion_table_similaire,
-                                  insertion_table_categorie_et_categorie_produit, insertion_table_review)
-from connexion import Connexion
+from multidimmensionnel.extraction_insertion import *
+from multidimmensionnel.connexion import Connexion
 
 
 def main():
@@ -11,7 +9,8 @@ def main():
     if bdd:
         try:
 
-            data = extraire_donnees_fichier('amazon-meta.txt')
+            data = extraire_donnees_fichier('/Users/arsanabdi/PycharmProjects/SAE-S4-BD/relationnel/amazon-meta.txt')
+
             #  insertion_table_asin(bdd, data)        c'est parfait
 
             #  insertion_table_groupe(bdd, data)      c'est parfait

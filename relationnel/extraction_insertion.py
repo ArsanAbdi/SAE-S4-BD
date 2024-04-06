@@ -41,7 +41,7 @@ def insertion_table_asin(connexion, produits: list):
 
 def insertion_table_groupe(connexion, produits: list):
     cur = connexion.cursor()
-    for produit in produits:
+    for produit in produits[500000:]:
 
         if len(produit) > 3:
 
@@ -61,7 +61,7 @@ def insertion_table_groupe(connexion, produits: list):
 
 def insertion_table_client(connexion, produits: list):
     cur = connexion.cursor()
-    for produit in produits:
+    for produit in produits[500000:]:
         if len(produit) > 3:
 
             debut_section_avis = next((i for i, item in enumerate(produit) if item.startswith("reviews: total:")), None)
@@ -87,41 +87,24 @@ def insertion_table_client(connexion, produits: list):
     cur.close()
 
 
-def extraire_informations_reviews(produit):
-    for ligne in produit:
-
-        if ligne.startswith("reviews:"):
-
-            decoupage_de_la_ligne = ligne.split()
-            try:
-
-                position_total_review = decoupage_de_la_ligne.index("total:") + 1
-                position_download_review = decoupage_de_la_ligne.index("downloaded:") + 1
-                position_avg_rate = decoupage_de_la_ligne.index("avg") + 2
-
-                total_review = int(decoupage_de_la_ligne[position_total_review])
-                download_review = int(decoupage_de_la_ligne[position_download_review])
-                avg_review = float(decoupage_de_la_ligne[position_avg_rate])
-
-                return total_review, download_review, avg_review
-            except (ValueError, IndexError):
-
-                break
-
-    return 0, 0, 0.0
-
-
 def insertion_table_produit(connexion, produits: list):
+    print("Insertion")
     cur = connexion.cursor()
 
     for produit in produits:
         if len(produit) < 3 or 'discontinued product' in produit:
 
+            print("Produit ignoré car discontinué")
             continue
-
         try:
 
             id_produit = int(produit[0].split(":")[1].strip())
+
+            cur.execute('SELECT idProduit FROM bibliotheque.PRODUIT WHERE idProduit = %s;', (id_produit,))
+            if cur.fetchone() is not None:
+                continue
+
+            print("gestion du produit", id_produit)
             num_asin = produit[1].split(":")[1].strip()
             titre = ": ".join(produit[2].split(": ")[1:]).strip() if len(produit) > 2 else 'Titre inconnu'
             nom_groupe = produit[3].split(":")[1].strip() if len(produit) > 3 else 'Groupe inconnu'
@@ -153,10 +136,10 @@ def insertion_table_produit(connexion, produits: list):
 
             cur.execute('''
             INSERT INTO bibliotheque.PRODUIT (idProduit, titre, salesrank, nb_similar,
-            nb_cat, total_review, download_review, avg_rate, idAsin, idGroupe) 
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) ON CONFLICT (id_produit) DO UPDATE SET
+            nb_cat, total_rev, dow_rev, avg_rate, idAsin, idGroupe) 
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) ON CONFLICT (idProduit) DO UPDATE SET
             titre = EXCLUDED.titre, salesrank = EXCLUDED.salesrank, nb_similar = EXCLUDED.nb_similar, 
-            nb_cat = EXCLUDED.nb_cat, total_review = EXCLUDED.total_review, download_review = EXCLUDED.download_review,
+            nb_cat = EXCLUDED.nb_cat, total_rev = EXCLUDED.total_rev, dow_rev = EXCLUDED.dow_rev,
             avg_rate = EXCLUDED.avg_rate, idAsin = EXCLUDED.idAsin, idGroupe = EXCLUDED.idGroupe;
             ''', (id_produit, titre, salesrank, nb_similar, nb_cat, total_review, download_review, avg_rate, idAsin, idGroupe))
             connexion.commit()
@@ -167,9 +150,33 @@ def insertion_table_produit(connexion, produits: list):
     cur.close()
 
 
+def extraire_informations_reviews(produit):
+    for ligne in produit:
+
+        if ligne.startswith("reviews:"):
+
+            decoupage_de_la_ligne = ligne.split()
+            try:
+
+                position_total_review = decoupage_de_la_ligne.index("total:") + 1
+                position_download_review = decoupage_de_la_ligne.index("downloaded:") + 1
+                position_avg_rate = decoupage_de_la_ligne.index("avg") + 2
+
+                total_review = int(decoupage_de_la_ligne[position_total_review])
+                download_review = int(decoupage_de_la_ligne[position_download_review])
+                avg_review = float(decoupage_de_la_ligne[position_avg_rate])
+
+                return total_review, download_review, avg_review
+            except (ValueError, IndexError):
+
+                break
+
+    return 0, 0, 0.0
+
+
 def insertion_table_similaire(connexion, produits: list):
     cur = connexion.cursor()
-    for produit in produits:
+    for produit in produits[500000:]:
 
         if len(produit) > 3:
 
@@ -186,7 +193,19 @@ def insertion_table_similaire(connexion, produits: list):
 
                     id_asin_similaire = resultat_du_select[0]
                     cur.execute('INSERT INTO bibliotheque.SIMILAIRE (idAsin, idAsinSimilaire) VALUES'
-                                ' (%s, %s);', (object_id, id_asin_similaire))
+                                ' (%s, %s) ON CONFLICT DO NOTHING;', (object_id, id_asin_similaire))
+                    connexion.commit()
+                else:
+
+                    cur.execute('SELECT idAsin FROM bibliotheque.ASIN ORDER BY idAsin DESC LIMIT 1;')
+                    resultat = cur.fetchone()[0]
+
+                    cur.execute('INSERT INTO bibliotheque.ASIN (idAsin, ASIN) VALUES'
+                                ' (%s, %s) ON CONFLICT DO NOTHING;', (resultat + 1, number))
+                    connexion.commit()
+
+                    cur.execute('INSERT INTO bibliotheque.SIMILAIRE (idAsin, idAsinSimilaire) VALUES'
+                                ' (%s, %s) ON CONFLICT DO NOTHING;', (object_id, resultat + 1))
                     connexion.commit()
         else:
 
@@ -287,7 +306,7 @@ def insertion_table_review(connexion, produits: list):
                             votes = int(decoupage_de_la_ligne[decoupage_de_la_ligne.index("votes:") + 1])
                             helpful = int(decoupage_de_la_ligne[decoupage_de_la_ligne.index("helpful:") + 1])
 
-                            cur.execute('SELECT id_client_du_avis FROM bibliotheque.CLIENT WHERE nom = %s;', (nom_du_client,))
+                            cur.execute('SELECT idClient FROM bibliotheque.CLIENT WHERE nom = %s;', (nom_du_client,))
                             resultat_de_la_requete = cur.fetchone()
                             if resultat_de_la_requete:
 
@@ -305,7 +324,7 @@ def insertion_table_review(connexion, produits: list):
                             try:
 
                                 cur.execute(
-                                    'INSERT INTO bibliotheque.REVIEW (id_du_produit, id_client_du_avis, date, '
+                                    'INSERT INTO bibliotheque.REVIEW (idProduit, idClient, date, '
                                     'rating, votes, helpful) VALUES (%s, %s, %s, %s, %s, %s);',
                                     (id_du_produit, id_client_du_avis, date, rating, votes, helpful))
                             except Exception as e:
@@ -316,6 +335,9 @@ def insertion_table_review(connexion, produits: list):
 
                             connexion.commit()
     cur.close()
+
+
+
 
 
 
