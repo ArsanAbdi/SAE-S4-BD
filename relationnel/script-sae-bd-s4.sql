@@ -20,6 +20,14 @@ CREATE TABLE bibliotheque.CLIENT (
     nom VARCHAR(255) UNIQUE
 );
 
+CREATE TABLE bibliotheque.CATEGORIE (
+    idCat SERIAL PRIMARY KEY,
+    nom VARCHAR(100),
+    num_cat INT,
+    id_parent_cat INT,
+    FOREIGN KEY (id_parent_cat) REFERENCES bibliotheque.CATEGORIE(idCat)
+);
+
 CREATE TABLE bibliotheque.PRODUIT (
     idProduit INT PRIMARY KEY,
     titre VARCHAR(1000),
@@ -43,13 +51,7 @@ CREATE TABLE bibliotheque.SIMILAIRE (
     FOREIGN KEY (idAsinSimilaire) REFERENCES bibliotheque.ASIN(idAsin)
 );
 
-CREATE TABLE bibliotheque.CATEGORIE (
-    idCat SERIAL PRIMARY KEY,
-    nom VARCHAR(100),
-    num_cat INT,
-    id_parent_cat INT,
-    FOREIGN KEY (id_parent_cat) REFERENCES bibliotheque.CATEGORIE(idCat)
-);
+
 
 CREATE TABLE bibliotheque.CATEGORIE_PRODUIT (
     idCat INT,
@@ -70,3 +72,6 @@ CREATE TABLE bibliotheque.REVIEW (
     FOREIGN KEY (idProduit) REFERENCES bibliotheque.PRODUIT(idProduit),
     FOREIGN KEY (idClient) REFERENCES bibliotheque.CLIENT(idClient)
 );
+
+ALTER TABLE bibliotheque.CATEGORIE ADD CONSTRAINT categ_nom_unique UNIQUE (nom);
+

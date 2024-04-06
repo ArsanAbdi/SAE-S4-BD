@@ -5,12 +5,12 @@ SET SEARCH_PATH TO bibliotheque_bis;
 DROP TABLE IF EXISTS DATE_A, CLIENT, PRODUIT, CATEGORIE, REVIEW, SIMILAIRE,
 					PRODUIT_ASIN, CATEGORIE_PRODUIT CASCADE;
 CREATE TABLE CLIENT (
-    idClient INT PRIMARY KEY,
+    idClient SERIAL PRIMARY KEY,
     nom VARCHAR(255)
 );
 
 CREATE TABLE DATE_A(
-    idDate INT PRIMARY KEY,
+    idDate SERIAL PRIMARY KEY,
     jour    INT,
     mois    INT,
     annee   INT
@@ -18,7 +18,7 @@ CREATE TABLE DATE_A(
 
 CREATE TABLE PRODUIT (
     idProduit INT PRIMARY KEY,
-    numAsin INT,
+    numAsin VARCHAR(10),
     groupe VARCHAR(30),
     titre VARCHAR(1000),
     salesrank INT,
@@ -29,10 +29,8 @@ CREATE TABLE PRODUIT (
     avg_rate FLOAT
 );
 
-
-
 CREATE TABLE REVIEW (
-    idRev INT PRIMARY KEY,
+    idRev SERIAL PRIMARY KEY,
     idProduit INT,
     idClient INT,
     idDate INT,
@@ -47,7 +45,7 @@ CREATE TABLE REVIEW (
 
 
 CREATE TABLE CATEGORIE (
-    idCat INT PRIMARY KEY,
+    idCat SERIAL PRIMARY KEY,
     nom VARCHAR(100),
     num_cat INT,
     id_parent_cat INT,
@@ -70,3 +68,6 @@ CREATE TABLE SIMILAIRE (
     FOREIGN KEY (idProduit) REFERENCES PRODUIT(idProduit),
     FOREIGN KEY (idProduitSimilaire) REFERENCES PRODUIT(idProduit)
 );
+
+ALTER TABLE bibliotheque_bis.CLIENT ADD CONSTRAINT client_nom_unique UNIQUE (nom);
+ALTER TABLE bibliotheque_bis.CATEGORIE ADD CONSTRAINT categ_nom_unique UNIQUE (nom);

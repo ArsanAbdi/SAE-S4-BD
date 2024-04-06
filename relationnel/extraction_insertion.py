@@ -41,7 +41,7 @@ def insertion_table_asin(connexion, produits: list):
 
 def insertion_table_groupe(connexion, produits: list):
     cur = connexion.cursor()
-    for produit in produits[500000:]:
+    for produit in produits:
 
         if len(produit) > 3:
 
@@ -61,7 +61,7 @@ def insertion_table_groupe(connexion, produits: list):
 
 def insertion_table_client(connexion, produits: list):
     cur = connexion.cursor()
-    for produit in produits[500000:]:
+    for produit in produits:
         if len(produit) > 3:
 
             debut_section_avis = next((i for i, item in enumerate(produit) if item.startswith("reviews: total:")), None)
@@ -176,7 +176,7 @@ def extraire_informations_reviews(produit):
 
 def insertion_table_similaire(connexion, produits: list):
     cur = connexion.cursor()
-    for produit in produits[500000:]:
+    for produit in produits:
 
         if len(produit) > 3:
 
