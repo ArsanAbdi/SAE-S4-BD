@@ -143,7 +143,7 @@ def extraire_informations_reviews(produit):
 def insertion_table_review(connexion, produits: list):
     cur = connexion.cursor()
 
-    for produit in produits:
+    for produit in produits[500000:]:
         if "discontinued product" in produit or len(produit) < 4:
             continue
 

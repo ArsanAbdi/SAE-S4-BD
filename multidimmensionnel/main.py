@@ -9,19 +9,19 @@ def main():
     if bdd:
         try:
 
-            data = extraire_donnees_fichier('/Users/arsanabdi/PycharmProjects/SAE-S4-BD/relationnel/amazon-meta.txt')
+            data = extraire_donnees_fichier('amazon-meta.txt')
 
-            #  insertion_table_client(bdd, data)  c'est parfait
+            #  insertion_table_client(bdd, data)
 
-            #  insertion_table_date(bdd, data)    c'est parfait
+            #  insertion_table_date(bdd, data)
 
-            #  insertion_table_produit(bdd, data)    c'est parfait
+            #  insertion_table_produit(bdd, data)
 
-            #  insertion_table_review(bdd, data)    c'est parfait
+            #  insertion_table_review(bdd, data)
 
-            #  insertion_table_categorie_et_categorie_produit(bdd, data)   c'est parfait
+            #  insertion_table_categorie_et_categorie_produit(bdd, data)
 
-            #  insertion_table_similaire(bdd, data)   c'est parfait
+            #  insertion_table_similaire(bdd, data)
 
         except Exception as e:
             print(f"problème : {e}")
